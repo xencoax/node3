@@ -2,7 +2,7 @@
 const http = require("http")
 const fs = require("fs")
 const dotenv = require("dotenv").config({ path: `/root/xen.env` }); 
-const port = 8080
+const port = 4024
 const debug = process.env.DEBUG === "YES"
 const server_start = Date.now()
 // variables
