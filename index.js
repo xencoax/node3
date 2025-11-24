@@ -99,6 +99,8 @@ async function spotify_player() {
 const server = http.createServer(async function(request, response) {
     let report = true
     const began_at = Date.now()
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     if(/\/alive\/?$/.exec(request.url) && request.method === "GET") {
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify({
