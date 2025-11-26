@@ -20,6 +20,7 @@ let spotify_app = {
     "last_spotify_player_request_empty": false
 }
 let shitty_request_counter = 0
+let xen_pronouns = ["he/him", "they/them"]
 // functions
 function timepiece_zero(piece, irregular_timepiece, place_count) {
     const pl10 = Math.log10(piece)
@@ -31,6 +32,7 @@ function timepiece_zero(piece, irregular_timepiece, place_count) {
     : `${piece}`
     : '0'.repeat(place_count) 
 } // unused, just leaving it here because of the amount of time and effort i spent on it
+// 11/26/2025: boy rewrite this shit THIS INSTANT
 function log_stamp() {
     let rn_plus_4 = new Date().toLocaleString("en-US", {timeZone: "Asia/Dubai"})
     return `[${rn_plus_4.valueOf()}] `
@@ -166,6 +168,10 @@ const server = http.createServer(async function(request, response) {
             : {"message": "server side failed!"}
         ))
         spotify_app.internal_rate_limit = false
+    }
+    else if(/\/api\/xen\/pronouns\/?$/.exec(request.url) && request.method == "GET") {
+        response.writeHead(200, {"Content-Type": "application/json"})
+        response.end(JSON.stringify({ pronouns: xen_pronouns }))
     }
     else {
         report = false
