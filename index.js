@@ -92,6 +92,7 @@ async function spotify_player() {
             spotify_app.last_request_successful = true
             spotify_app.last_spotify_player_request_empty = false
             spotify_app.last_return_spotify_player = data
+            spotify_app.last_player_request = Date.now()
         })
     } catch(ex) {
         console.log("failed while trying to get player data: " + ex)
@@ -124,7 +125,6 @@ const server = http.createServer(async function(request, response) {
             return_object = spotify_app.last_return_spotify_player
         } else console.log(time_since_begin(Date.now() - began_at) + "im not even going to bother getting player data")
         if(debug) console.log(time_since_begin(Date.now() - began_at) + "responding...")
-        spotify_app.internal_rate_limit = false            
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify(
             (spotify_app.last_auth_successful && spotify_app.last_request_successful) ?
@@ -165,6 +165,7 @@ const server = http.createServer(async function(request, response) {
             : {"empty": true}
             : {"message": "server side failed!"}
         ))
+        spotify_app.internal_rate_limit = false
     }
     else {
         report = false
