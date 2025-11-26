@@ -74,7 +74,6 @@ async function spotify_get_access() {
 }
 async function spotify_player() {
     //console.log("(spotify player was called)")
-    if(Date.now() - spotify_app.last_player_request < 3600) spotify_app.internal_rate_limit = true
     try {
         await fetch("https://api.spotify.com/v1/me/player", { headers: { "Authorization": "Bearer " + spotify_app.access_token } })
         .then(function(r) {
@@ -114,6 +113,7 @@ const server = http.createServer(async function(request, response) {
     }
     if(/\/xen\/listen\/?$/.exec(request.url) && request.method === "GET") {
         let return_object
+        if(Date.now() - spotify_app.last_player_request < 3600) spotify_app.internal_rate_limit = true
         if(!spotify_access_token_valid()) {
             if(debug) console.log(time_since_begin(Date.now() - began_at) + "authenticating...")        
             await spotify_get_access()
