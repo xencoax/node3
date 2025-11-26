@@ -169,7 +169,7 @@ const server = http.createServer(async function(request, response) {
         ))
         spotify_app.internal_rate_limit = false
     }
-    else if(/\/api\/xen\/pronouns\/?$/.exec(request.url) && request.method == "GET") {
+    if(/\/xen\/pronouns\/?$/.exec(request.url) && request.method == "GET") {
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify({ pronouns: xen_pronouns }))
     }
