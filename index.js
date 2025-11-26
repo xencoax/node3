@@ -114,7 +114,7 @@ const server = http.createServer(async function(request, response) {
             uptime_ms : Date.now() - server_start
         }))
     }
-    if(/\/xen\/listen\/?$/.exec(request.url) && request.method === "GET") {
+    else if(/\/xen\/listen\/?$/.exec(request.url) && request.method === "GET") {
         let return_object
         if(Date.now() - spotify_app.last_player_request < 3600) spotify_app.internal_rate_limit = true
         if(!spotify_access_token_valid()) {
@@ -169,7 +169,7 @@ const server = http.createServer(async function(request, response) {
         ))
         spotify_app.internal_rate_limit = false
     }
-    if(/\/xen\/pronouns\/?$/.exec(request.url) && request.method == "GET") {
+    else if(/\/xen\/pronouns\/?$/.exec(request.url) && request.method == "GET") {
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify({ pronouns: xen_pronouns }))
     }
