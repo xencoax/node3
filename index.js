@@ -7,11 +7,13 @@ const debug = process.env.DEBUG === "YES"
 const server_start = Date.now()
 // variables
 let spotify_app = {
+    "internal_rate_limit": false,
     "client_id": process.env.SCID,
     "client_secret": process.env.SCS,
     "refresh_token": process.env.SCXRT,
     "access_token": null, // on start
     "last_token_acquiry": null,
+    "last_player_request": null,
     "last_auth_successful": null,
     "last_request_successful": null,
     "last_return_spotify_player": {},
@@ -72,6 +74,7 @@ async function spotify_get_access() {
 }
 async function spotify_player() {
     //console.log("(spotify player was called)")
+    if(Date.now() - spotify_app.last_player_request < 3600) spotify_app.internal_rate_limit = true
     try {
         await fetch("https://api.spotify.com/v1/me/player", { headers: { "Authorization": "Bearer " + spotify_app.access_token } })
         .then(function(r) {
@@ -115,12 +118,13 @@ const server = http.createServer(async function(request, response) {
             if(debug) console.log(time_since_begin(Date.now() - began_at) + "authenticating...")        
             await spotify_get_access()
         }
-        if(spotify_app.last_auth_successful) {
+        if(spotify_app.last_auth_successful && !spotify_app.internal_rate_limit) {
             if(debug) console.log(time_since_begin(Date.now() - began_at) + "getting player data...")
             await spotify_player()
             return_object = spotify_app.last_return_spotify_player
         } else console.log(time_since_begin(Date.now() - began_at) + "im not even going to bother getting player data")
-        if(debug) console.log(time_since_begin(Date.now() - began_at) + "responding...")            
+        if(debug) console.log(time_since_begin(Date.now() - began_at) + "responding...")
+        spotify_app.internal_rate_limit = false            
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify(
             (spotify_app.last_auth_successful && spotify_app.last_request_successful) ?
@@ -155,10 +159,11 @@ const server = http.createServer(async function(request, response) {
                     is_local: return_object.item.is_local,
                     name: return_object.item.name,
                     popularity: return_object.item.popularity
-                }
+                },
+                message: spotify_app.internal_rate_limit ? "returning previously cached spotify request because it was cached less than a second ago" : "none"
             } 
             : {"empty": true}
-            : {"message": "server side failed! please try later."}
+            : {"message": "server side failed!"}
         ))
     }
     else {
