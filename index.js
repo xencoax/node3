@@ -122,9 +122,9 @@ const server = http.createServer(async function(request, response) {
         if(spotify_app.last_auth_successful && !spotify_app.internal_rate_limit) {
             if(debug) console.log(time_since_begin(Date.now() - began_at) + "getting player data...")
             await spotify_player()
-            return_object = spotify_app.last_return_spotify_player
         } else console.log(time_since_begin(Date.now() - began_at) + "im not even going to bother getting player data")
         if(debug) console.log(time_since_begin(Date.now() - began_at) + "responding...")
+        return_object = spotify_app.last_return_spotify_player
         response.writeHead(200, {"Content-Type": "application/json"})
         response.end(JSON.stringify(
             (spotify_app.last_auth_successful && spotify_app.last_request_successful) ?
