@@ -3,7 +3,7 @@ const http = require("http")
 const fs = require("fs")
 const dotenv = require("dotenv").config({ path: `/root/xen.env` }); 
 const port = 4024
-const debug = process.env.DEBUG === "YES"
+const debug = !(process.env.DEBUG === "NO")
 const server_start = Date.now()
 // variables
 let spotify_app = {
