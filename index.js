@@ -1,7 +1,7 @@
 // server prereq
 const http = require("http")
 const fs = require("fs")
-const dotenv = require("dotenv").config({ path: `/root/xen.env` }); 
+const dotenv = require("dotenv").config({ path: `/var/www/xen/.env` }); 
 const port = 4024
 const debug = !(process.env.DEBUG === "NO")
 const server_start = Date.now()
